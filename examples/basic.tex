@@ -1,0 +1,50 @@
+\documentclass{memoir}
+\usepackage{er-diagram}
+
+\begin{document}
+
+\begin{tikzpicture}
+  \pic [] { entity = {{emp}
+      {Employee}
+      {
+        \underline{id} \\
+        name \\
+        address
+      }
+  }};
+
+  \pic [right = 9em of emp] { entity = {{brew}
+      {Brewery}
+      {
+        \underline{id} \\
+        name \\
+        address
+      }
+  }};
+
+  \draw[many-omany] (emp) -- node[label,above]{works for} (brew);
+
+  \pic [below left = 4em and 0em of brew] { entityweak = {{order}
+      {Order}
+      {
+        \underline{id} \\
+        date
+      }
+  }};
+
+  \draw[one-many,double] (brew.south) |- node[label,above right]{generates} (order.east);
+
+  \pic [right = 5em of brew] { entityassociative = {{beer}
+      {Beer}
+      {
+        \underline{id} \\
+        name \\
+        price \\
+        alcoholPercent \\
+      }
+  }};
+
+  \draw[many-] (brew.east) -| ($(brew)!0.5!(beer)$) |- ($(beer.west) + (0, -1em)$);
+\end{tikzpicture}
+
+\end{document}
