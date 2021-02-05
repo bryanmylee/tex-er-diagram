@@ -1,0 +1,186 @@
+\ProvidesPackage{er-diagram}
+
+%{{{
+\RequirePackage[margin=0.5in]{geometry}
+\renewcommand{\arraystretch}{1.1}
+
+\RequirePackage{tikz}
+\usetikzlibrary{shapes.multipart}
+\usetikzlibrary{positioning}
+\usetikzlibrary{calc}
+
+\RequirePackage{array}
+\RequirePackage{pdflscape}
+\RequirePackage[normalem]{ulem}
+\setlength{\ULdepth}{4pt}
+
+% defining new arrow heads
+\makeatletter
+\pgfdeclarearrow {%{{{ many
+  name = many,
+  parameters = { },
+  setup code = { },
+  drawing code = {
+    \pgfutil@tempdima=0.6pt%
+    \pgfsetdash{}{+0pt}%
+    \pgfsetmiterjoin%
+    \pgfsetlinewidth{0.4pt}%
+    \pgfpathmoveto{\pgfqpoint{0pt}{-9\pgfutil@tempdima}}%
+    \pgfpathlineto{\pgfqpoint{-13\pgfutil@tempdima}{0pt}}%
+    \pgfpathlineto{\pgfqpoint{0pt}{9\pgfutil@tempdima}}%
+    \pgfpathmoveto{\pgfqpoint{0\pgfutil@tempdima}{0\pgfutil@tempdima}}%
+    \pgfpathmoveto{\pgfqpoint{-8pt}{-6pt}}% 
+    \pgfpathlineto{\pgfqpoint{-8pt}{-6pt}}%  
+    \pgfpathlineto{\pgfqpoint{-8pt}{6pt}}% 
+    \pgfusepathqstroke%
+  },
+  defaults = { }
+}%}}}
+
+\pgfdeclarearrow {%{{{ omany
+  name = omany,
+  parameters = { },
+  setup code = { },
+  drawing code = {
+    \pgfutil@tempdima=0.6pt%
+    \pgfsetdash{}{+0pt}%
+    \pgfsetmiterjoin%
+    \pgfsetlinewidth{0.4pt}%
+    \pgfpathmoveto{\pgfqpoint{0pt}{-9\pgfutil@tempdima}}%
+    \pgfpathlineto{\pgfqpoint{-13\pgfutil@tempdima}{0pt}}%
+    \pgfpathlineto{\pgfqpoint{0pt}{9\pgfutil@tempdima}}%
+    \pgfpathmoveto{\pgfqpoint{0\pgfutil@tempdima}{0\pgfutil@tempdima}}%  
+    \pgfpathmoveto{\pgfqpoint{0\pgfutil@tempdima}{0\pgfutil@tempdima}}%
+    \pgfpathmoveto{\pgfqpoint{-6pt}{-6pt}}% 
+    \pgfusepathqstroke%
+    \pgfsetfillcolor{white}
+    \pgfpathcircle{\pgfpoint{-11.5pt}{0}} {3.5pt}
+    \pgfusepathqfillstroke%
+  },
+  defaults = { }
+}%}}}
+
+\pgfdeclarearrow {%{{{ one
+  name = one,
+  parameters = { },
+  setup code = { },
+  drawing code = {
+    \pgfutil@tempdima=0.6pt%
+    \pgfsetdash{}{+0pt}%
+    \pgfsetmiterjoin%
+    \pgfsetlinewidth{0.4pt}%
+    \pgfpathmoveto{\pgfqpoint{0\pgfutil@tempdima}{0\pgfutil@tempdima}}%
+    \pgfpathmoveto{\pgfqpoint{-6pt}{-6pt}}% 
+    \pgfpathlineto{\pgfqpoint{-6pt}{-6pt}}%  
+    \pgfpathlineto{\pgfqpoint{-6pt}{6pt}}% 
+    \pgfpathmoveto{\pgfqpoint{0\pgfutil@tempdima}{0\pgfutil@tempdima}}%
+    \pgfpathmoveto{\pgfqpoint{-8pt}{-6pt}}% 
+    \pgfpathlineto{\pgfqpoint{-8pt}{-6pt}}%  
+    \pgfpathlineto{\pgfqpoint{-8pt}{6pt}}%    
+    \pgfusepathqstroke%
+  },
+  defaults = { }
+}%}}}
+
+\pgfdeclarearrow {%{{{ oone
+  name = oone,
+  parameters = { },
+  setup code = { },
+  drawing code = {
+    \pgfutil@tempdima=0.6pt%
+    %\advance\pgfutil@tempdima by.25\pgflinewidth%
+    \pgfsetdash{}{+0pt}%
+    \pgfsetmiterjoin%
+    \pgfsetlinewidth{0.4pt}%
+    \pgfpathmoveto{\pgfqpoint{0\pgfutil@tempdima}{0\pgfutil@tempdima}}%
+    \pgfpathmoveto{\pgfqpoint{-4pt}{-6pt}}% 
+    \pgfpathlineto{\pgfqpoint{-4pt}{-6pt}}%  
+    \pgfpathlineto{\pgfqpoint{-4pt}{6pt}}% 
+    \pgfsetfillcolor{white}
+    \pgfpathcircle{\pgfpoint{-11.5pt}{0}} {3.5pt}
+    \pgfusepathqfillstroke%
+  },
+  defaults = { }
+}%}}}
+
+% defining entity styles
+\tikzset{%
+  label/.style={font=\footnotesize},
+  % Defining different boxes
+  pics/entity/.style n args={3}{code={%
+      %{{{
+      \node[draw,
+      rectangle split,
+      rectangle split parts=2,
+      text height=1.5ex,
+      % text width=8.5em,
+      text centered,
+      ] (#1)
+      {#2 \nodepart[font=\scriptsize]{second}
+        \begin{tabular}{>{\raggedright\arraybackslash}p{9em}}
+          #3
+        \end{tabular}
+      };%
+  }},%}}}
+  pics/entityassociative/.style n args={3}{code={%
+      %{{{
+      \node[draw,
+      rectangle split,
+      rectangle split parts=2,
+      text height=1.5ex,
+      % text width=8.5em,
+      text centered,
+      rounded corners=0.2cm,
+      ] (#1)
+      {#2 \nodepart[font=\scriptsize]{second}
+        \begin{tabular}{>{\raggedright\arraybackslash}p{9em}}
+          #3
+        \end{tabular}
+      };%
+  }},%}}}
+  pics/entityweak/.style n args={3}{code={%
+      %{{{
+      \node[draw,
+      rectangle split,
+      rectangle split parts=2,
+      text height=1.5ex,
+      % text width=8.5em,
+      text centered,
+      double,
+      ] (#1)
+      {#2 \nodepart[font=\scriptsize]{second}
+        \begin{tabular}{>{\raggedright\arraybackslash}p{9em}}
+          #3
+        \end{tabular}
+      };%
+  }},%}}}
+  pics/entitynoatt/.style n args={2}{code={%
+      %{{{
+      \node[draw,
+      text height=1.5ex,
+      % text width=8.5em,
+      text centered
+      ] (#1)
+      {#2};%
+  }},%}}}
+  pics/entitynohead/.style n args={2}{code={%
+      %{{{
+      \node[draw,
+      font=\scriptsize
+      ] (#1)
+      {
+        \begin{tabular}{>{\raggedright\arraybackslash}p{9em}}
+          #2
+        \end{tabular}
+      };%
+  }},%}}}
+  zig zag/.style={
+    to path={(\tikztostart) -| ($(\tikztostart)!#1!(\tikztotarget)$) |- (\tikztotarget)}
+  },
+  zig zag/.default=0.5,
+}
+%}}}
+\makeatother
+
+\endinput
+
